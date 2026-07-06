@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -1297,4 +1297,176 @@
     <script src="flower.js"></script>
     <script src="happy birtday.js"></script>
   </body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Día Vanessa</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;800&family=Dancing+Script:wght@700&display=swap');
+
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #1a3c34 0%, #050a09 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .dot {
+            transition: transform 0.3s ease, opacity 0.5s ease;
+        }
+
+        .dot:hover {
+            transform: scale(3);
+            fill: #2ecc71 !important;
+        }
+
+        .text-container {
+            text-align: center;
+            margin-top: -40px;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeIn 2s forwards 2.5s;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: #ffffff;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(255,255,255,0.4);
+        }
+
+        p {
+            color: #2ecc71;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <svg id="panda-svg" viewBox="0 0 400 400"></svg>
+    </div>
+
+    <div class="text-container">
+        <h1>¡Feliz día del maestro!</h1>
+        <h1>Vanessa</h1>
+    </div>
+
+    <script>
+        const svg = document.getElementById('panda-svg');
+        const rows = 55; // Mayor resolución
+        const cols = 55;
+        const spacing = 400 / rows;
+
+        // Definición matemática de la silueta del panda
+        function getPandaColor(x, y) {
+            // Normalizar coordenadas al centro (200, 200)
+            const dx = x - 200;
+            const dy = y - 200;
+
+            // Orejas
+            const distLeftEar = Math.sqrt(Math.pow(x - 120, 2) + Math.pow(y - 110, 2));
+            const distRightEar = Math.sqrt(Math.pow(x - 280, 2) + Math.pow(y - 110, 2));
+            if (distLeftEar < 35 || distRightEar < 35) return "#111";
+
+            // Cara (Elipse principal)
+            const headShape = (Math.pow(dx, 2) / Math.pow(100, 2)) + (Math.pow(dy, 2) / Math.pow(85, 2));
+            
+            // Manchas ojos (Rotadas)
+            const exL = (x - 165), eyL = (y - 195);
+            const rotL = (exL * Math.cos(0.4) + eyL * Math.sin(0.4))**2 / 25**2 + 
+                         (exL * Math.sin(0.4) - eyL * Math.cos(0.4))**2 / 35**2;
+            
+            const exR = (x - 235), eyR = (y - 195);
+            const rotR = (exR * Math.cos(-0.4) + eyR * Math.sin(-0.4))**2 / 25**2 + 
+                         (exR * Math.sin(-0.4) - eyR * Math.cos(-0.4))**2 / 35**2;
+
+            // Nariz
+            const distNose = Math.sqrt(Math.pow(dx, 2)*2 + Math.pow(dy - 45, 2)*4);
+
+            // Brillo ojos
+            const distGlintL = Math.sqrt(Math.pow(x - 168, 2) + Math.pow(y - 185, 2));
+            const distGlintR = Math.sqrt(Math.pow(x - 232, 2) + Math.pow(y - 185, 2));
+
+            // Lógica de capas
+            if (distGlintL < 5 || distGlintR < 5) return "#ffffff";
+            if (rotL < 1 || rotR < 1) return "#111";
+            if (distNose < 25) return "#111";
+            if (headShape < 1) return "#ffffff";
+
+            return null; // Espacio vacío
+        }
+
+        function createGrid() {
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const x = i * spacing;
+                    const y = j * spacing;
+                    const color = getPandaColor(x, y);
+
+                    if (color) {
+                        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        dot.setAttribute("cx", x);
+                        dot.setAttribute("cy", y);
+                        dot.setAttribute("r", 1.8);
+                        dot.setAttribute("fill", color);
+                        dot.setAttribute("class", "dot");
+                        
+                        // Animación de entrada
+                        dot.style.opacity = "0";
+                        dot.style.transform = `scale(0)`;
+                        
+                        svg.appendChild(dot);
+
+                        // Aparecer con retraso basado en posición para efecto de barrido
+                        setTimeout(() => {
+                            dot.style.opacity = color === "#ffffff" ? "0.9" : "1";
+                            dot.style.transform = `scale(1)`;
+                        }, (i + j) * 15);
+                    }
+                }
+            }
+        }
+
+        window.onload = createGrid;
+    </script>
+</body>
 </html>
